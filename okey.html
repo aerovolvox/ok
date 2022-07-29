@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@2.6.0/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.1.0/cropper.min.js"></script> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <title>TFT Matchmaking</title>
+</head>
+<style>
+    body{
+        background-color: #444;
+    }
+    table{
+        table-layout: fixed; width: 100% ;
+    }
+    td,th{
+        text-align: center;
+        padding: 8px;
+        height:66px !important;
+		font-weight: bold;
+		
+		}
+    tr{
+        color:white;
+        font-size: 24px;
+        cursor: pointer;
+        letter-spacing: 2px;
+    }
+    .eliminated, .eliminated>.finished{
+        color: black;
+    }
+    .finished{
+        color:gray
+    }
+    .form-control, .form-control:focus{
+        font-size: 20px;
+        padding: 4px 14px;
+        background-color: orange;
+        color:black;
+        line-height: 36px;
+    }
+    .btn{
+        font-size: 20px;
+        padding: 5px 15px;
+        line-height: 36px;
+    }
+    
+    
+    .inputSection{
+        margin: 15px;
+    }
+</style>
+<body>
+    <div id="app">
+        
+        <div class="inputSection" style="text-align: center;">
+            <!-- <input type="text" v-model="input" @keyup.enter="add"><button @click="add" >+</button> -->
+            <div class="input-group mb-3 w-25 mx-auto">
+                <input type="text" class="form-control" placeholder="Player name" v-model="input" @keyup.enter="add">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-warning" type="button" @click="add">Add</button>
+                </div>
+              </div>
+        </div>
+        
+        <!-- <img id="img" src="C:\Riot Games\League of Legends\Screenshots\Screen42.png"> -->
+
+        <table style="width:100%">
+            <tr>              
+              <th style="width: 20px;"></th>
+              <th></th>
+              <th v-for="i in 13">{{i}}</th>
+            </tr>
+            <tr :class="[player.eliminated? 'eliminated':'']" :key="i" v-for="(player,i) in players">
+                <td style="padding: 1px; width: 20px;"@click="remove(i)">-</td>
+                <td :style="{'color':player.name}" >{{player.name}}</td>
+                <td style="padding:15px; text-align:center;" :key="j" v-for="(round,j) in player.rounds" @click="toggle(i,j)">{{convert(round)}}</td>        
+            </tr>
+        </table>
+
+    </div>
+
+
+</body>
+</html>      
+<script>
+	
+    new Vue({
+        el: '#app',
+        data: {
+            input:"",
+            players:[],
+			
+        },
+        methods:{
+            endTurn(i){
+                this.roundFinished = [1,1,1,1,1,1];
+                this.roundFinished[i-1] = 0;
+                this.$forceUpdate()
+
+            },
+            add(){
+                if(this.input.length){
+
+                    let player = {name:this.input,rounds:[0,0,0,0,0,0,0,0,0,0,0,0,0],eliminated:false}
+                    this.players.push(player)
+                    this.input=""
+                }s
+            },
+            toggle(i,j){
+
+                    this.players[i].rounds[j] = (this.players[i].rounds[j] + 1) %3 ;
+                    this.$forceUpdate()
+                
+
+            },
+            eliminate(i){
+                this.players[i].eliminated = !this.players[i].eliminated 
+            },
+            remove(i){
+                this.players.splice(i,1)
+            },
+            convert(bool){
+                if(bool==2){
+                    return "X"
+                }
+				else if(bool==1){
+					return "/"
+				}
+                else{
+                    return " "
+                }
+            }
+        }
+    })
+</script>
+</html>
